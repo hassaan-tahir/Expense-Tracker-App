@@ -3,6 +3,7 @@ package com.example.expensetracker.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.example.expensetracker.R
 import com.example.expensetracker.data.ExpenseDatabase
 import com.example.expensetracker.data.dao.ExpenseDao
 import com.example.expensetracker.data.model.ExpenseEntitity
@@ -50,6 +51,18 @@ class HomeViewModel(dao: ExpenseDao): ViewModel() {
         }
         return "€ ${total}"
 
+    }
+
+    fun getItemIcon(item:ExpenseEntitity): Int{
+        if (item.category == "Paypal") {
+            return R.drawable.ic_paypal
+        }
+        else if (item.category == "Netflix") {
+            return R.drawable.ic_netflix
+        } else if (item.category == "Starbucks") {
+            return R.drawable.ic_starbucks
+        }
+        return  R.drawable.ic_paypal
     }
 }
 

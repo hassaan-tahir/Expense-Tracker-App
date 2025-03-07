@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface ExpenseDao {
 
-    @Query
+    @Query("SELECT * FROM expense_table")
     fun getAllExpenses(): Flow<List<ExpenseEntitity>>
 
 
