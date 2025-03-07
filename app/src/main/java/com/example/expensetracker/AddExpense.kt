@@ -17,11 +17,15 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -107,6 +111,12 @@ fun DataForm(modifier: Modifier) {
     val dateDialogVisibility = remember {
         mutableStateOf(false)
     }
+    val category = remember {
+        mutableStateOf("")
+    }
+    val type = remember {
+        mutableStateOf("")
+    }
         
     Column (modifier = modifier
 
@@ -120,22 +130,44 @@ fun DataForm(modifier: Modifier) {
 
     ) {
         ExpenseTextView(text = "Name", fontSize = 14.sp)
-        Spacer(modifier = Modifier.size(8.dp))
+        Spacer(modifier = Modifier.size(4.dp))
         OutlinedTextField(value = name.value, onValueChange = {
             name.value = it
         }, modifier = Modifier.fillMaxWidth())
+        Spacer(modifier = Modifier.size(8.dp))
 
         ExpenseTextView(text = "Amount", fontSize = 14.sp)
-        Spacer(modifier = Modifier.size(8.dp))
+        Spacer(modifier = Modifier.size(4.dp))
         OutlinedTextField(value = amount.value, onValueChange = {
             amount.value = it
         }, modifier = Modifier.fillMaxWidth())
+        Spacer(modifier = Modifier.size(8.dp))
 
         ExpenseTextView(text = "Date", fontSize = 14.sp)
-        Spacer(modifier = Modifier.size(8.dp))
+        Spacer(modifier = Modifier.size(4.dp))
         OutlinedTextField(value = if(date.value == 0L) "" else Utils.formatDateToHumanReadableForm(date.value),
             onValueChange = {},
-            modifier = Modifier.fillMaxWidth().clickable {dateDialogVisibility.value = true}, enabled = false)
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { dateDialogVisibility.value = true }, enabled = false)
+        Spacer(modifier = Modifier.size(8.dp))
+
+        ExpenseTextView(text = "Category", fontSize = 14.sp)
+        Spacer(modifier = Modifier.size(4.dp))
+        ExpenseDropDown(listOf("Netflix", "Paypal", "Starbucks", "Salary", "Upwork"),
+            onItemSelected = {
+                category.value = it
+            })
+        Spacer(modifier = Modifier.size(8.dp))
+
+        ExpenseTextView(text = "Type", fontSize = 14.sp)
+        Spacer(modifier = Modifier.size(4.dp))
+        ExpenseDropDown(listOf("Income", "Expense"),
+            onItemSelected = {
+                type.value = it
+            })
+        Spacer(modifier = Modifier.size(8.dp))
+
 
         Button(onClick = {  },
             modifier = Modifier
@@ -166,13 +198,46 @@ fun ExpenseDatePickerDialog(
     val selectedDate = datePickerState.selectedDateMillis ?: 0L
     DatePickerDialog(onDismissRequest = { onDismiss() },
         confirmButton = { TextButton(onClick = { onDateSelected(selectedDate) }) {
-            Text(text = "Confirm")
+            ExpenseTextView(text = "Confirm")
         } }, dismissButton = {
             TextButton(onClick = { onDateSelected(selectedDate) }) {
-                Text(text = "Cancel")
+                ExpenseTextView(text = "Cancel")
             }
         }) {
         DatePicker(state = datePickerState)
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ExpenseDropDown(listOfItems:List<String>, onItemSelected:(item:String) -> Unit) {
+    val expanded = remember {
+        mutableStateOf(false)
+    }
+    val selectedItem = remember {
+        mutableStateOf<String>(listOfItems[0])
+    }
+
+    ExposedDropdownMenuBox(expanded = expanded.value, onExpandedChange = {expanded.value = it}) {
+        TextField(
+            value = selectedItem.value,
+            onValueChange = {},
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(),
+            readOnly = true,
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded.value)
+            })
+        ExposedDropdownMenu(expanded = expanded.value, onDismissRequest = {  }) {
+            listOfItems.forEach {
+                DropdownMenuItem(text = { ExpenseTextView(text = it) }, onClick = {
+                    selectedItem.value = it
+                    onItemSelected(selectedItem.value)
+                    expanded.value = false
+                })
+            }
+        }
     }
 }
 
