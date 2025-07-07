@@ -74,6 +74,7 @@ dependencies {
 
     kapt("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
+<<<<<<< HEAD
 
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
@@ -82,4 +83,6 @@ dependencies {
     implementation ("androidx.constraintlayout:constraintlayout:2.1.4")
 
     implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+=======
+>>>>>>> 43c15129b274b4887c7919c846112e3d0ab43d36
 }
